@@ -12,16 +12,20 @@ class ConfirmationError {
 export class ConfirmUser {
   @Mutation(() => Boolean)
   async confirmUser(
-    @Arg("token") token: string
+    @Arg("phoneToken") phoneToken: string,
+    @Arg("emailToken") emailToken: string
   ): Promise<Boolean | ConfirmationError> {
-    const userId = await redis.get(token);
+    const userId = await redis.get(phoneToken);
 
-    if (!userId) {
+    const emailUserId = await redis.get(emailToken);
+
+    if (!userId || !emailUserId) {
       return false;
     }
 
     await User.update({ id: userId }, { isVerified: true });
-    redis.del(token);
+    redis.del(phoneToken);
+    redis.del(emailToken);
 
     return true;
   }

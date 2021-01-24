@@ -1,4 +1,10 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
 
 @ObjectType()
@@ -13,11 +19,22 @@ export class User extends BaseEntity {
   name: string;
 
   @Field()
+  @Column("varchar", { length: 255, unique: true })
+  email: string;
+
+  @Field()
   @Column("varchar", { length: 10, unique: true })
   phone: string;
 
   @Column("text")
   password: string;
+
+  @Column({ default: false })
+  isPrime: boolean;
+
+  @Field()
+  @CreateDateColumn()
+  createdAt: Date;
 
   @Column({ default: false })
   isVerified: boolean;

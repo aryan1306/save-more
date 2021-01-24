@@ -1,3 +1,4 @@
+import { sendEmailConfirmation } from "./../utils/sendEmailConfirmation";
 import { MyContext } from "../../types/MyContext";
 import { generateUniqueCode } from "./../utils/generateUniqueCode";
 import { UserResponse } from "./UserResponse";
@@ -20,6 +21,9 @@ class RegisterInput {
   name: string;
 
   @Field()
+  email: string;
+
+  @Field()
   phone: string;
 
   @Field()
@@ -38,13 +42,30 @@ export class RegisterResolver {
     @Arg("data") data: RegisterInput,
     @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    const existingUser = await User.findOne({ phone: data.phone });
+    const existingUser = await User.findOne({
+      phone: data.phone,
+      email: data.email,
+    });
     if (existingUser) {
       return {
         errors: [
           {
             field: "phone",
-            message: "The phone number entered already exists",
+            message: "Phone/Email already exists",
+          },
+        ],
+      };
+    }
+
+    //TODO add this to env
+    const reg = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (!data.email.match(reg)) {
+      return {
+        errors: [
+          {
+            field: "email",
+            message: "Please enter a valid email",
           },
         ],
       };
@@ -65,12 +86,14 @@ export class RegisterResolver {
         errors: [
           {
             field: "name",
-            message: "Name length should be greater than 2 letters",
+            message:
+              "Name length should be greater than or equal to 2 characters",
           },
         ],
       };
     }
 
+    //TODO change to 8
     if (data.password.length < 3) {
       return {
         errors: [
@@ -91,6 +114,7 @@ export class RegisterResolver {
     }).save();
 
     await sendConfirmation(data.phone, await generateUniqueCode(user.id));
+    await sendEmailConfirmation(data.email, await generateUniqueCode(user.id));
 
     req.session!.userId = user.id;
 

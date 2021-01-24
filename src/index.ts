@@ -1,5 +1,6 @@
 import "reflect-metadata";
 // import { User } from "./entities/User";
+import { LoginResolver } from "./resolvers/user/Login";
 import { ConfirmUser } from "./resolvers/user/ConfirmUser";
 import { RegisterResolver } from "./resolvers/user/Register";
 import { createConnection } from "typeorm";
@@ -13,7 +14,7 @@ import { redis } from "./redis";
 
 const main = async () => {
   await createConnection();
-  // User.delete({ isVerified: false });
+  // User.delete({ name: "test" });
   const app = Express();
   const RedisStore = connectRedis(session);
   app.use(
@@ -40,7 +41,7 @@ const main = async () => {
   );
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [RegisterResolver, ConfirmUser],
+      resolvers: [RegisterResolver, ConfirmUser, LoginResolver],
       validate: false,
     }),
     context: ({ req, res }) => ({ req, res }),
