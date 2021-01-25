@@ -1,8 +1,7 @@
 import "reflect-metadata";
+// import { Vendor } from "./entities/Vendor";
 // import { User } from "./entities/User";
-import { LoginResolver } from "./resolvers/user/Login";
-import { ConfirmUser } from "./resolvers/user/ConfirmUser";
-import { RegisterResolver } from "./resolvers/user/Register";
+import dotenv from "dotenv";
 import { createConnection } from "typeorm";
 import Express from "express";
 import cors from "cors";
@@ -13,8 +12,9 @@ import session from "express-session";
 import { redis } from "./redis";
 
 const main = async () => {
+  dotenv.config();
   await createConnection();
-  // User.delete({ name: "test" });
+  // Vendor.delete({ City: "Pune" });
   const app = Express();
   const RedisStore = connectRedis(session);
   app.use(
@@ -28,8 +28,8 @@ const main = async () => {
       store: new RedisStore({
         client: redis,
       }),
-      name: "qid",
-      secret: "aslkdfjoiq12312",
+      name: process.env.COOKIE_NAME!,
+      secret: process.env.SECRET!,
       resave: false,
       saveUninitialized: false,
       cookie: {
@@ -41,7 +41,7 @@ const main = async () => {
   );
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [RegisterResolver, ConfirmUser, LoginResolver],
+      resolvers: [__dirname + "resolvers/**/*.ts"],
       validate: false,
     }),
     context: ({ req, res }) => ({ req, res }),

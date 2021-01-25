@@ -1,5 +1,5 @@
-const accountSid = "AC143b83f846abd4d3d81f3bb555fc6c2c";
-const authToken = "df4f8fb98b3b8cca2b3409dba261d9c4";
+const accountSid = process.env.accountSid;
+const authToken = process.env.authToken;
 const client = require("twilio")(accountSid, authToken);
 
 export const sendConfirmation = async (phone: string, code: string) => {

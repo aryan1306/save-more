@@ -31,7 +31,7 @@ class RegisterInput {
 }
 
 @Resolver()
-export class RegisterResolver {
+export class UserRegisterResolver {
   @Query(() => String)
   async hello() {
     return "Hello World";
@@ -109,12 +109,20 @@ export class RegisterResolver {
 
     const user = await User.create({
       name: data.name,
+      email: data.email,
       password: hashedPassword,
       phone: data.phone,
     }).save();
 
-    await sendConfirmation(data.phone, await generateUniqueCode(user.id));
-    await sendEmailConfirmation(data.email, await generateUniqueCode(user.id));
+    await sendConfirmation(
+      data.phone,
+      await generateUniqueCode(user.id, false)
+    );
+    await sendEmailConfirmation(
+      data.email,
+      await generateUniqueCode(user.id, false),
+      false
+    );
 
     req.session!.userId = user.id;
 

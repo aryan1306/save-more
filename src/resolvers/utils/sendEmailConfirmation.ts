@@ -1,6 +1,10 @@
 import nodemailer from "nodemailer";
 
-export const sendEmailConfirmation = async (email: string, code: string) => {
+export const sendEmailConfirmation = async (
+  email: string,
+  code: string,
+  isVendor: boolean
+) => {
   let testAccount = await nodemailer.createTestAccount();
 
   // create reusable transporter object using the default SMTP transport
@@ -18,7 +22,9 @@ export const sendEmailConfirmation = async (email: string, code: string) => {
   let info = await transporter.sendMail({
     from: '"Fred Foo 👻" <foo@example.com>',
     to: email,
-    subject: "Confirmation Email for Save More Customer Registration",
+    subject: isVendor
+      ? "Confirmation Email for Save More Partner Registration"
+      : "Confirmation Email for Save More Customer Registration",
     html: `<h1 style="text-align: center;">We Are Delighted to have you onboard</h1>
     <p>please use this OTP to confirm your email </p>
     <code style="text-align: center; font-size: larger;">${code}</code>

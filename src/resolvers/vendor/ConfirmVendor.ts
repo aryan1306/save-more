@@ -9,16 +9,18 @@ class ConfirmationError {
 }
 
 @Resolver()
-export class ConfirmUser {
+export class ConfirmVendor {
   @Mutation(() => Boolean)
   async confirmUser(
     @Arg("phoneToken") phoneToken: string,
     @Arg("emailToken") emailToken: string
   ): Promise<Boolean | ConfirmationError> {
-    const userId = await redis.get(process.env.USER_PHONE_PREFIX + phoneToken);
+    const userId = await redis.get(
+      process.env.VENDOR_PHONE_PREFIX + phoneToken
+    );
 
     const emailUserId = await redis.get(
-      process.env.USER_EMAIL_PREFIX + emailToken
+      process.env.VENDOR_EMAIL_PREFIX + emailToken
     );
 
     if (!userId || !emailUserId) {
