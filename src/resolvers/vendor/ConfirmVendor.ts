@@ -1,37 +1,30 @@
-import { User } from "./../../entities/User";
+import { Vendor } from "./../../entities/Vendor";
+import { Arg, Mutation, Resolver } from "type-graphql";
 import { redis } from "./../../redis";
-import { Arg, Field, Mutation, ObjectType, Resolver } from "type-graphql";
 
-@ObjectType()
-class ConfirmationError {
-  @Field()
-  message: string;
-}
+// @ObjectType()
+// class ConfirmationVendorError {
+//   @Field()
+//   message: string;
+// }
 
 @Resolver()
-export class ConfirmVendor {
+export class ConfirmVendorEmail {
   @Mutation(() => Boolean)
-  async confirmUser(
+  async confirmVendor(
     @Arg("phoneToken") phoneToken: string,
     @Arg("emailToken") emailToken: string
-  ): Promise<Boolean | ConfirmationError> {
-    const userId = await redis.get(
-      process.env.VENDOR_PHONE_PREFIX + phoneToken
-    );
+  ): Promise<Boolean> {
+    const emailUserId = await redis.get(emailToken);
+    const phoneUserId = await redis.get(phoneToken);
 
-    const emailUserId = await redis.get(
-      process.env.VENDOR_EMAIL_PREFIX + emailToken
-    );
-
-    if (!userId || !emailUserId) {
-      return {
-        message: "The code is expired or invalid",
-      };
+    if (!emailUserId || !phoneUserId) {
+      return false;
     }
 
-    await User.update({ id: userId }, { isVerified: true });
-    redis.del(phoneToken);
+    await Vendor.update({ VendorId: emailUserId! }, { isVerified: true });
     redis.del(emailToken);
+    redis.del(phoneToken);
 
     return true;
   }

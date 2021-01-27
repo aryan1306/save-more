@@ -1,12 +1,12 @@
+import { Arg, Mutation, Resolver } from "type-graphql";
 import { User } from "./../../entities/User";
 import { redis } from "./../../redis";
-import { Arg, Field, Mutation, ObjectType, Resolver } from "type-graphql";
 
-@ObjectType()
-class ConfirmationError {
-  @Field()
-  message: string;
-}
+// @ObjectType()
+// class ConfirmationError {
+//   @Field()
+//   message: string;
+// }
 
 @Resolver()
 export class ConfirmUser {
@@ -14,17 +14,13 @@ export class ConfirmUser {
   async confirmUser(
     @Arg("phoneToken") phoneToken: string,
     @Arg("emailToken") emailToken: string
-  ): Promise<Boolean | ConfirmationError> {
-    const userId = await redis.get(process.env.USER_PHONE_PREFIX + phoneToken);
+  ): Promise<Boolean> {
+    const userId = await redis.get(phoneToken);
 
-    const emailUserId = await redis.get(
-      process.env.USER_EMAIL_PREFIX + emailToken
-    );
+    const emailUserId = await redis.get(emailToken);
 
     if (!userId || !emailUserId) {
-      return {
-        message: "The code is expired or invalid",
-      };
+      return false;
     }
 
     await User.update({ id: userId }, { isVerified: true });

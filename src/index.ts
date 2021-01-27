@@ -1,6 +1,6 @@
-import "reflect-metadata";
+// import { Offer } from "./entities/Offer";
 // import { Vendor } from "./entities/Vendor";
-// import { User } from "./entities/User";
+import "reflect-metadata";
 import dotenv from "dotenv";
 import { createConnection } from "typeorm";
 import Express from "express";
@@ -14,7 +14,8 @@ import { redis } from "./redis";
 const main = async () => {
   dotenv.config();
   await createConnection();
-  // Vendor.delete({ City: "Pune" });
+  // Vendor.delete({ isVerified: false });
+  // Offer.delete({ category: "Food and Beverages" });
   const app = Express();
   const RedisStore = connectRedis(session);
   app.use(
@@ -41,7 +42,7 @@ const main = async () => {
   );
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [__dirname + "resolvers/**/*.ts"],
+      resolvers: [__dirname + "/resolvers/**/*.ts"],
       validate: false,
     }),
     context: ({ req, res }) => ({ req, res }),

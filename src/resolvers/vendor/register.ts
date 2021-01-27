@@ -91,11 +91,11 @@ export class VendorRegisterResolver {
       }).save();
       await sendConfirmation(
         data.phone,
-        await generateUniqueCode(vendor.VendorId, true)
+        await generateUniqueCode(vendor.VendorId)
       );
       await sendEmailConfirmation(
         data.email,
-        await generateUniqueCode(vendor.VendorId, true),
+        await generateUniqueCode(vendor.VendorId),
         true
       );
       req.session.vendorId = vendor.VendorId;
@@ -115,11 +115,11 @@ export class VendorRegisterResolver {
     }).save();
     await sendConfirmation(
       data.phone,
-      await generateUniqueCode(vendor.VendorId, true)
+      await generateUniqueCode(vendor.VendorId)
     );
     await sendEmailConfirmation(
       data.email,
-      await generateUniqueCode(vendor.VendorId, true),
+      await generateUniqueCode(vendor.VendorId),
       false
     );
 

@@ -1,8 +1,10 @@
+import { Offer } from "./Offer";
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
@@ -59,4 +61,7 @@ export class Vendor extends BaseEntity {
 
   @Column({ default: false })
   isVerified: boolean;
+
+  @OneToMany(() => Offer, (offer) => offer.vendor)
+  offers: Offer[];
 }

@@ -5,7 +5,7 @@ import argon2 from "argon2";
 import { Arg, Ctx, Field, InputType, Mutation, Resolver } from "type-graphql";
 
 @InputType()
-class LoginInput {
+class VendorLoginInput {
   @Field()
   phone: string;
 
@@ -16,8 +16,8 @@ class LoginInput {
 @Resolver()
 export class VendorLoginResolver {
   @Mutation(() => VendorResponse)
-  async login(
-    @Arg("data") data: LoginInput,
+  async vendorLogin(
+    @Arg("data") data: VendorLoginInput,
     @Ctx() { req }: MyContext
   ): Promise<VendorResponse> {
     const vendor = await Vendor.findOne({ OrganizationPhone: data.phone });

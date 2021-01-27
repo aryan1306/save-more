@@ -114,13 +114,10 @@ export class UserRegisterResolver {
       phone: data.phone,
     }).save();
 
-    await sendConfirmation(
-      data.phone,
-      await generateUniqueCode(user.id, false)
-    );
+    await sendConfirmation(data.phone, await generateUniqueCode(user.id));
     await sendEmailConfirmation(
       data.email,
-      await generateUniqueCode(user.id, false),
+      await generateUniqueCode(user.id),
       false
     );
 
