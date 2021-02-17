@@ -8,11 +8,20 @@ export class OfferInput {
   @Field()
   ValidFrom: Date;
 
-  @Field({ nullable: true })
+  @Field()
   ValidTo: Date;
 
   @Field()
+  offerType: string;
+
+  @Field({ nullable: true })
+  discountValue: string;
+
+  @Field()
   category: string;
+
+  @Field(() => [String], { nullable: true })
+  BranchAddress: string[];
 
   @Field({ nullable: true })
   OfferCode: string;
@@ -20,6 +29,6 @@ export class OfferInput {
   @Field(() => [String])
   ValidCities: string[];
 
-  @Field(() => [String])
-  OfferTerms: string[];
+  @Field(() => String)
+  OfferTerms: string;
 }

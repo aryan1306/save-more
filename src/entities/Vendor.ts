@@ -47,7 +47,6 @@ export class Vendor extends BaseEntity {
   @Column("text")
   Password: string;
 
-  @Field()
   @Column({ default: false })
   isPartner: boolean;
 

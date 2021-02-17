@@ -29,12 +29,17 @@ export class User extends BaseEntity {
   @Column("text")
   password: string;
 
+  @Field()
   @Column({ default: false })
   isPrime: boolean;
 
   @Field()
   @CreateDateColumn()
   createdAt: Date;
+
+  @Field({ nullable: true })
+  @Column("timestamp", { nullable: true })
+  expiresAt: Date;
 
   @Column({ default: false })
   isVerified: boolean;

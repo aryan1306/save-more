@@ -20,12 +20,20 @@ export class Offer extends BaseEntity {
   title: string;
 
   @Field()
+  @Column()
+  offerType: string;
+
+  @Field()
   @Column({ type: "timestamp" })
   ValidFrom: Date;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ type: "timestamp", nullable: true })
   ValidTo: Date;
+
+  @Field()
+  @Column({ nullable: true })
+  discountValue: number;
 
   @Field()
   @Column()
@@ -39,14 +47,19 @@ export class Offer extends BaseEntity {
   @Column("text", { array: true })
   ValidCities: string[];
 
-  @Field(() => [String])
-  @Column("text", { array: true })
-  OfferTerms: string[];
+  @Field(() => [String], { nullable: true })
+  @Column("text", { array: true, nullable: true })
+  BranchAddress: string[];
 
   @Field()
-  @Column()
+  @Column("uuid")
   vendorId: string;
 
+  @Field()
+  @Column("text", { nullable: true })
+  OfferTerms: string;
+
+  @Field()
   @ManyToOne(() => Vendor, (vendor) => vendor.offers)
   vendor: Vendor;
 }

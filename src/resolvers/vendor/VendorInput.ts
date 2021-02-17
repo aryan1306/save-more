@@ -25,7 +25,4 @@ export class VendorInput {
 
   @Field()
   password: string;
-
-  @Field()
-  isPartner: boolean;
 }

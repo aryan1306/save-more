@@ -1,3 +1,4 @@
+// import { User } from "./entities/User";
 // import { Offer } from "./entities/Offer";
 // import { Vendor } from "./entities/Vendor";
 import "reflect-metadata";
@@ -14,8 +15,9 @@ import { redis } from "./redis";
 const main = async () => {
   dotenv.config();
   await createConnection();
-  // Vendor.delete({ isVerified: false });
-  // Offer.delete({ category: "Food and Beverages" });
+  // User.delete({});
+  // Vendor.delete({});
+  // Offer.delete({});
   const app = Express();
   const RedisStore = connectRedis(session);
   app.use(

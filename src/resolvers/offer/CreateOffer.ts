@@ -23,6 +23,16 @@ export class CreateOfferResolver {
         ],
       };
     }
+    if (data.offerType == "Discount" && !data.discountValue) {
+      return {
+        errors: [
+          {
+            field: "discountValue",
+            message: "Discount value cannot be empty if Discount is selected",
+          },
+        ],
+      };
+    }
     if (data.ValidTo) {
       if (data.ValidFrom > data.ValidTo) {
         return {
@@ -36,12 +46,14 @@ export class CreateOfferResolver {
       }
       const offer = await Offer.create({
         ...data,
+        discountValue: parseFloat(data.discountValue),
         vendorId: req.session.vendorId,
       }).save();
       return { offer };
     }
     const offer = await Offer.create({
       ...data,
+      discountValue: parseFloat(data.discountValue),
       vendorId: req.session.vendorId,
     }).save();
     return { offer };

@@ -113,6 +113,12 @@ export class UserRegisterResolver {
       password: hashedPassword,
       phone: data.phone,
     }).save();
+    // await User.update(
+    //   { id: user.id },
+    //   {
+    //     expiresAt: user.createdAt.setFullYear(user.createdAt.getFullYear() + 1),
+    //   }
+    // );
 
     await sendConfirmation(data.phone, await generateUniqueCode(user.id));
     await sendEmailConfirmation(

@@ -78,30 +78,6 @@ export class VendorRegisterResolver {
 
     let hashedPassword = await argon2.hash(data.password);
 
-    if (!data.isPartner) {
-      const vendor = await Vendor.create({
-        OrganizationName: data.OrganizationName,
-        Address: data.Address,
-        AddressURL: data.Address,
-        City: data.City,
-        OrganizationEmail: data.email,
-        OrganizationPhone: data.phone,
-        Password: hashedPassword,
-        VendorName: data.VendorName,
-      }).save();
-      await sendConfirmation(
-        data.phone,
-        await generateUniqueCode(vendor.VendorId)
-      );
-      await sendEmailConfirmation(
-        data.email,
-        await generateUniqueCode(vendor.VendorId),
-        true
-      );
-      req.session.vendorId = vendor.VendorId;
-      return { vendor };
-    }
-    const code = Math.round(1000 + Math.random() * 9000).toString();
     const vendor = await Vendor.create({
       OrganizationName: data.OrganizationName,
       Address: data.Address,
@@ -111,7 +87,6 @@ export class VendorRegisterResolver {
       OrganizationPhone: data.phone,
       Password: hashedPassword,
       VendorName: data.VendorName,
-      VendorCode: code,
     }).save();
     await sendConfirmation(
       data.phone,
