@@ -1,6 +1,7 @@
-// import { User } from "./entities/User";
-// import { Offer } from "./entities/Offer";
-// import { Vendor } from "./entities/Vendor";
+import { Agent } from "./entities/Agent";
+import { Offer } from "./entities/Offer";
+import { User } from "./entities/User";
+import { Vendor } from "./entities/Vendor";
 import "reflect-metadata";
 import dotenv from "dotenv";
 import { createConnection } from "typeorm";
@@ -11,10 +12,17 @@ import { buildSchema } from "type-graphql";
 import connectRedis from "connect-redis";
 import session from "express-session";
 import { redis } from "./redis";
+import path from "path";
 
 const main = async () => {
   dotenv.config();
-  await createConnection();
+  await createConnection({
+    type: "postgres",
+    url: process.env.DATABASE_URL!,
+    logging: true,
+    migrations: [path.join(__dirname, "./migration/*")],
+    entities: [Offer, User, Vendor, Agent],
+  });
   // User.delete({});
   // Vendor.delete({});
   // Offer.delete({});
@@ -22,7 +30,7 @@ const main = async () => {
   const RedisStore = connectRedis(session);
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: process.env.CORS_ORIGIN!,
       credentials: true,
     })
   );
