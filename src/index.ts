@@ -18,7 +18,10 @@ const main = async () => {
   dotenv.config();
   await createConnection({
     type: "postgres",
-    url: process.env.DATABASE_URL!,
+    url:
+      process.env.NODE_ENV === "production"
+        ? process.env.DATABASE_URL!
+        : process.env.DATABASE_LOCAL_URL,
     logging: true,
     migrations: [path.join(__dirname, "./migration/*")],
     entities: [Offer, User, Vendor, Agent],
@@ -28,6 +31,7 @@ const main = async () => {
   // Offer.delete({});
   const app = Express();
   const RedisStore = connectRedis(session);
+  app.set("proxy", 1);
   app.use(
     cors({
       origin: process.env.CORS_ORIGIN!,
