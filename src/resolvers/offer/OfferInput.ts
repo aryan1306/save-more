@@ -17,11 +17,11 @@ export class OfferInput {
   @Field({ nullable: true })
   discountValue: string;
 
+  @Field({ nullable: true })
+  imgURL: string;
+
   @Field()
   category: string;
-
-  @Field(() => [String], { nullable: true })
-  BranchAddress: string[];
 
   @Field({ nullable: true })
   OfferCode: string;

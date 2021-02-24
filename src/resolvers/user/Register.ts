@@ -1,8 +1,4 @@
-import { sendEmailConfirmation } from "./../utils/sendEmailConfirmation";
-import { MyContext } from "../../types/MyContext";
-import { generateUniqueCode } from "./../utils/generateUniqueCode";
-import { UserResponse } from "./UserResponse";
-import { User } from "./../../entities/User";
+import argon2 from "argon2";
 import {
   Arg,
   Ctx,
@@ -12,8 +8,9 @@ import {
   Query,
   Resolver,
 } from "type-graphql";
-import argon2 from "argon2";
-import { sendConfirmation } from "../utils/sendConfirmation";
+import { MyContext } from "../../types/MyContext";
+import { User } from "./../../entities/User";
+import { UserResponse } from "./UserResponse";
 
 @InputType()
 class RegisterInput {
@@ -119,13 +116,6 @@ export class UserRegisterResolver {
     //     expiresAt: user.createdAt.setFullYear(user.createdAt.getFullYear() + 1),
     //   }
     // );
-
-    await sendConfirmation(data.phone, await generateUniqueCode(user.id));
-    await sendEmailConfirmation(
-      data.email,
-      await generateUniqueCode(user.id),
-      false
-    );
 
     req.session!.userId = user.id;
 

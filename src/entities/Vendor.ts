@@ -30,14 +30,10 @@ export class Vendor extends BaseEntity {
 
   @Field()
   @Column()
-  AddressURL: string;
-
-  @Field()
-  @Column()
   City: string;
 
   @Field()
-  @Column("varchar", { length: 255, unique: true })
+  @Column("varchar", { length: 255 })
   OrganizationEmail: string;
 
   @Field()
@@ -46,13 +42,6 @@ export class Vendor extends BaseEntity {
 
   @Column("text")
   Password: string;
-
-  @Column({ default: false })
-  isPartner: boolean;
-
-  @Field()
-  @Column({ nullable: true })
-  VendorCode: string;
 
   @Field()
   @CreateDateColumn()

@@ -3,7 +3,6 @@ import { VendorResponse } from "./VendorResponse";
 import { MyContext } from "./../../types/MyContext";
 import argon2 from "argon2";
 import { Arg, Ctx, Field, InputType, Mutation, Resolver } from "type-graphql";
-import { ApolloError } from "apollo-server-express";
 
 @InputType()
 class VendorLoginInput {
@@ -43,9 +42,7 @@ export class VendorLoginResolver {
         ],
       };
     }
-    if (!vendor.isVerified) {
-      throw new ApolloError("your email/phone is not verified");
-    }
+
     req.session.vendorId = vendor.VendorId;
 
     return { vendor };

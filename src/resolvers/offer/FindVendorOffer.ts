@@ -18,7 +18,7 @@ export class FindVendorOffer {
         'OrganizationName', v."OrganizationName",
         'Address', v."Address",
         'OrganizationPhone', v."OrganizationPhone",
-        'AddressURL', v."AddressURL"
+        'OrganizationEmail', v."OrganizationEmail"
         ) vendor
       from offer o 
       inner join vendor v on v."VendorId" = o."vendorId"

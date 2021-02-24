@@ -39,6 +39,11 @@ export class Offer extends BaseEntity {
   @Column()
   category: string;
 
+  //TODO change to false
+  @Field()
+  @Column("text", { nullable: true })
+  imgURL: string;
+
   @Field()
   @Column({ nullable: true })
   OfferCode: string;
@@ -46,10 +51,6 @@ export class Offer extends BaseEntity {
   @Field(() => [String])
   @Column("text", { array: true })
   ValidCities: string[];
-
-  @Field(() => [String], { nullable: true })
-  @Column("text", { array: true, nullable: true })
-  BranchAddress: string[];
 
   @Field()
   @Column("uuid")
@@ -59,7 +60,7 @@ export class Offer extends BaseEntity {
   @Column("text", { nullable: true })
   OfferTerms: string;
 
-  @Field()
+  @Field(() => Vendor)
   @ManyToOne(() => Vendor, (vendor) => vendor.offers)
   vendor: Vendor;
 }

@@ -1,12 +1,9 @@
-import { MyContext } from "./../../types/MyContext";
-import { Vendor } from "./../../entities/Vendor";
-import { VendorResponse } from "./VendorResponse";
-import { Mutation, Resolver, Arg, Ctx } from "type-graphql";
 import argon2 from "argon2";
-import { generateUniqueCode } from "../utils/generateUniqueCode";
-import { sendConfirmation } from "../utils/sendConfirmation";
-import { sendEmailConfirmation } from "../utils/sendEmailConfirmation";
+import { Arg, Ctx, Mutation, Resolver } from "type-graphql";
+import { Vendor } from "./../../entities/Vendor";
+import { MyContext } from "./../../types/MyContext";
 import { VendorInput } from "./VendorInput";
+import { VendorResponse } from "./VendorResponse";
 
 @Resolver()
 export class VendorRegisterResolver {
@@ -17,14 +14,13 @@ export class VendorRegisterResolver {
   ): Promise<VendorResponse> {
     const existingUser = await Vendor.findOne({
       OrganizationPhone: data.phone,
-      OrganizationEmail: data.email,
     });
     if (existingUser) {
       return {
         errors: [
           {
-            field: "email",
-            message: "Phone/email already exists",
+            field: "phone",
+            message: "Phone number already exists",
           },
         ],
       };
@@ -56,7 +52,7 @@ export class VendorRegisterResolver {
       return {
         errors: [
           {
-            field: "name",
+            field: "OrganizationName",
             message:
               "Name length should be greater than or equal to 2 characters",
           },
@@ -65,7 +61,7 @@ export class VendorRegisterResolver {
     }
 
     //TODO change to 8
-    if (data.password.length < 3) {
+    if (data.password.length < 8) {
       return {
         errors: [
           {
@@ -80,23 +76,13 @@ export class VendorRegisterResolver {
 
     const vendor = await Vendor.create({
       OrganizationName: data.OrganizationName,
-      Address: data.Address,
-      AddressURL: data.AddressURL,
-      City: data.City,
       OrganizationEmail: data.email,
+      Address: data.Address,
+      City: data.City,
       OrganizationPhone: data.phone,
-      Password: hashedPassword,
       VendorName: data.VendorName,
+      Password: hashedPassword,
     }).save();
-    await sendConfirmation(
-      data.phone,
-      await generateUniqueCode(vendor.VendorId)
-    );
-    await sendEmailConfirmation(
-      data.email,
-      await generateUniqueCode(vendor.VendorId),
-      false
-    );
 
     req.session.vendorId = vendor.VendorId;
 

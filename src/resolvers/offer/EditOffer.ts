@@ -13,7 +13,10 @@ export class EditOffer {
     if (!offer) {
       return null;
     }
-    const updatedOffer = await Offer.update({ vendorId: id }, { ...data });
+    const updatedOffer = await Offer.update(
+      { vendorId: id },
+      { ...data, discountValue: parseFloat(data.discountValue) }
+    );
     return updatedOffer;
   }
 }

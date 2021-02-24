@@ -12,9 +12,6 @@ export class VendorInput {
   Address: string;
 
   @Field()
-  AddressURL: string;
-
-  @Field()
   City: string;
 
   @Field()
