@@ -16,7 +16,7 @@ import path from "path";
 
 const main = async () => {
   dotenv.config();
-  await createConnection({
+  const conn = await createConnection({
     type: "postgres",
     url:
       process.env.NODE_ENV === "production"
@@ -26,6 +26,7 @@ const main = async () => {
     migrations: [path.join(__dirname, "./migration/*")],
     entities: [Offer, User, Vendor, Agent],
   });
+  await conn.runMigrations();
   // User.delete({});
   // Vendor.delete({});
   // Offer.delete({});
@@ -67,7 +68,7 @@ const main = async () => {
     cors: false,
   });
 
-  app.listen(4000, () => {
+  app.listen(parseInt(process.env.PORT!), () => {
     console.log("server started on localhost:4000/graphql");
   });
 };

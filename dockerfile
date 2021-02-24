@@ -1,4 +1,4 @@
-FROM node:15
+FROM node:14
 
 WORKDIR /usr/app
 
@@ -8,11 +8,14 @@ COPY yarn.lock ./
 RUN yarn
 
 COPY . .
-COPY .env .env
 
-EXPOSE 8080
+RUN yarn build
+
+COPY .env .env
 
 ENV NODE_ENV=production
 
-CMD [ "ts-node", "src/index.ts" ]
+EXPOSE 8080
+
+CMD [ "node", "dist/index.ts" ]
 USER node
