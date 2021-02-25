@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import "dotenv-safe/config";
+// import "dotenv-safe/config";
 import { Agent } from "./entities/Agent";
 import { Offer } from "./entities/Offer";
 import { User } from "./entities/User";
