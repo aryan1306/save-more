@@ -1,8 +1,9 @@
+import "reflect-metadata";
+import "dotenv-safe/config";
 import { Agent } from "./entities/Agent";
 import { Offer } from "./entities/Offer";
 import { User } from "./entities/User";
 import { Vendor } from "./entities/Vendor";
-import "reflect-metadata";
 import dotenv from "dotenv";
 import { createConnection } from "typeorm";
 import Express from "express";
@@ -15,13 +16,10 @@ import { redis } from "./redis";
 import path from "path";
 
 const main = async () => {
-  dotenv.config();
+  dotenv.config({ path: path.resolve(__dirname, "../.env") });
   const conn = await createConnection({
     type: "postgres",
-    url:
-      process.env.NODE_ENV === "production"
-        ? process.env.DATABASE_URL!
-        : process.env.DATABASE_LOCAL_URL,
+    url: process.env.DATABASE_URL,
     logging: true,
     migrations: [path.join(__dirname, "./migration/*")],
     entities: [Offer, User, Vendor, Agent],
@@ -35,7 +33,7 @@ const main = async () => {
   app.set("proxy", 1);
   app.use(
     cors({
-      origin: process.env.CORS_ORIGIN!,
+      origin: process.env.CORS_ORIGIN,
       credentials: true,
     })
   );
@@ -44,7 +42,7 @@ const main = async () => {
       store: new RedisStore({
         client: redis,
       }),
-      name: process.env.COOKIE_NAME!,
+      name: process.env.COOKIE_NAME,
       secret: process.env.SECRET!,
       resave: false,
       saveUninitialized: false,

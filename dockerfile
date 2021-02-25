@@ -8,14 +8,13 @@ COPY yarn.lock ./
 RUN yarn
 
 COPY . .
+COPY .env.production .env
 
 RUN yarn build
 
-COPY .env .env
-
-ENV NODE_ENV=production
+ENV NODE_ENV production
 
 EXPOSE 8080
 
-CMD [ "node", "dist/index.ts" ]
+CMD [ "node", "dist/index.js" ]
 USER node
