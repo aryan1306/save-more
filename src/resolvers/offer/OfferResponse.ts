@@ -1,7 +1,13 @@
 import { Offer } from "./../../entities/Offer";
 import { Field, ObjectType } from "type-graphql";
-import { FieldError } from "../user/UserResponse";
 
+@ObjectType()
+export class FieldError {
+  @Field()
+  field: string;
+  @Field()
+  message: string;
+}
 @ObjectType()
 export class OfferResponse {
   @Field(() => [FieldError], { nullable: true })
