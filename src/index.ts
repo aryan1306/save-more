@@ -44,8 +44,8 @@ const main = async () => {
       }),
       name: process.env.COOKIE_NAME,
       secret: process.env.SECRET!,
-      resave: false,
-      saveUninitialized: false,
+      resave: true,
+      saveUninitialized: true,
       cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
