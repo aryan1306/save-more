@@ -44,6 +44,14 @@ export class Vendor extends BaseEntity {
   Password: string;
 
   @Field()
+  @Column("varchar", { length: 20, nullable: true })
+  AgentCode: string;
+
+  @Field()
+  @Column({ default: false })
+  hasPaid: boolean;
+
+  @Field()
   @CreateDateColumn()
   createdAt: Date;
 

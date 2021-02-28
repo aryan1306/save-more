@@ -30,27 +30,37 @@ const main = async () => {
   // Offer.delete({});
   const app = Express();
   const RedisStore = connectRedis(session);
-  app.set("proxy", 1);
+  app.set("trust proxy", 1);
   app.use(
     cors({
-      origin: process.env.CORS_ORIGIN,
+      origin: [
+        "http://localhost:3000",
+        "http://localhost",
+        "capacitor://localhost",
+      ],
       credentials: true,
     })
   );
   app.use(
     session({
+      name: process.env.COOKIE_NAME,
       store: new RedisStore({
         client: redis,
+        disableTouch: true,
       }),
-      name: process.env.COOKIE_NAME,
-      secret: process.env.SECRET!,
-      resave: true,
-      saveUninitialized: true,
       cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        domain:
+          process.env.NODE_ENV === "production"
+            ? ".api-save-more.me"
+            : undefined,
         maxAge: 1000 * 60 * 60 * 24 * 7 * 365, // 7 years
       },
+      saveUninitialized: false,
+      secret: process.env.SECRET!,
+      resave: false,
     })
   );
   const apolloServer = new ApolloServer({
@@ -71,4 +81,6 @@ const main = async () => {
   });
 };
 
-main();
+main().catch((err) => {
+  console.error(err);
+});

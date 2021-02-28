@@ -12,7 +12,6 @@ import {
   UseMiddleware,
 } from "type-graphql";
 import { generatePhoneUniqueCode } from "../utils/generateUniqueCode";
-import { sendConfirmation, verifyPhone } from "../utils/sendConfirmation";
 import { sendEmailConfirmation } from "../utils/sendEmailConfirmation";
 import { VendorInput } from "./VendorInput";
 import { VendorResponse } from "./VendorResponse";
@@ -31,16 +30,10 @@ export class VendorResolver {
     return vendor;
   }
   @Mutation(() => Boolean)
-  async confirmVendor(
-    @Arg("phone") phone: string,
-    @Arg("phoneToken") phoneToken: string,
-    @Arg("emailToken") emailToken: string
-  ): Promise<Boolean> {
-    const res = await verifyPhone(phone, phoneToken);
-
+  async confirmVendor(@Arg("emailToken") emailToken: string): Promise<Boolean> {
     const emailUserId = await redis.get(emailToken);
 
-    if (!res || !emailUserId) {
+    if (!emailUserId) {
       return false;
     }
 
@@ -49,6 +42,20 @@ export class VendorResolver {
 
     return true;
   }
+
+  @Mutation(() => Boolean)
+  async paymentConfirmation(
+    @Arg("uniqueCode") uniqueCode: string,
+    @Ctx() { req }: MyContext
+  ): Promise<Boolean> {
+    if (uniqueCode !== "SAVEMORE-BCV2W7") {
+      return false;
+    }
+    const id = req.session.vendorId;
+    await Vendor.update({ VendorId: id }, { hasPaid: true });
+    return true;
+  }
+
   @Mutation(() => Boolean)
   logoutVendor(@Ctx() { req, res }: MyContext) {
     return new Promise((resolve) =>
@@ -147,7 +154,7 @@ export class VendorResolver {
       await generatePhoneUniqueCode(vendor.VendorId),
       true
     );
-    await sendConfirmation(data.phone);
+    // await sendConfirmation(data.phone);
 
     req.session.vendorId = vendor.VendorId;
 
@@ -159,6 +166,16 @@ export class VendorResolver {
     @Ctx() { req }: MyContext
   ): Promise<VendorResponse> {
     const vendor = await Vendor.findOne({ OrganizationPhone: data.phone });
+    if (!vendor?.isVerified) {
+      return {
+        errors: [
+          {
+            field: "phone",
+            message: "email is not verified",
+          },
+        ],
+      };
+    }
     if (!vendor) {
       return {
         errors: [
