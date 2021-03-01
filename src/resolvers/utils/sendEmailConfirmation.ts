@@ -1,8 +1,6 @@
 import sgMail from "@sendgrid/mail";
 
-sgMail.setApiKey(
-  "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"
-);
+sgMail.setApiKey(process.env.SENDGRID);
 export const sendEmailConfirmation = (
   email: string,
   code: string,
