@@ -1,19 +1,19 @@
+import { ApolloServer } from "apollo-server-express";
+import connectRedis from "connect-redis";
+import cors from "cors";
+import dotenv from "dotenv";
+import Express from "express";
+import session from "express-session";
+import path from "path";
 import "reflect-metadata";
+import { buildSchema } from "type-graphql";
+import { createConnection } from "typeorm";
 // import "dotenv-safe/config";
 import { Agent } from "./entities/Agent";
 import { Offer } from "./entities/Offer";
 import { User } from "./entities/User";
 import { Vendor } from "./entities/Vendor";
-import dotenv from "dotenv";
-import { createConnection } from "typeorm";
-import Express from "express";
-import cors from "cors";
-import { ApolloServer } from "apollo-server-express";
-import { buildSchema } from "type-graphql";
-import connectRedis from "connect-redis";
-import session from "express-session";
 import { redis } from "./redis";
-import path from "path";
 
 const main = async () => {
   dotenv.config({ path: path.resolve(__dirname, "../.env") });
@@ -29,6 +29,7 @@ const main = async () => {
   // Vendor.delete({});
   // Offer.delete({});
   const app = Express();
+
   const RedisStore = connectRedis(session);
   app.set("trust proxy", 1);
   app.use(
@@ -51,18 +52,19 @@ const main = async () => {
       cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        // sameSite: "lax",
         domain:
           process.env.NODE_ENV === "production"
             ? ".api-save-more.me"
             : undefined,
-        maxAge: 1000 * 60 * 60 * 24 * 7 * 365, // 7 years
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
       },
       saveUninitialized: false,
       secret: process.env.SECRET!,
       resave: false,
     })
   );
+
   const apolloServer = new ApolloServer({
     schema: await buildSchema({
       resolvers: [path.resolve(__dirname, "resolvers/**/*.*s")],

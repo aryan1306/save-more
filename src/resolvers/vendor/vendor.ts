@@ -20,6 +20,11 @@ import { redis } from "../../redis";
 
 @Resolver()
 export class VendorResolver {
+  @Query(() => [Vendor])
+  async listAllVendors() {
+    const vendors = Vendor.find();
+    return vendors;
+  }
   @Query(() => Vendor)
   @UseMiddleware(isVendorAuth)
   async me(@Ctx() { req }: MyContext): Promise<Vendor | ApolloError> {
@@ -48,12 +53,43 @@ export class VendorResolver {
     @Arg("uniqueCode") uniqueCode: string,
     @Ctx() { req }: MyContext
   ): Promise<Boolean> {
-    if (uniqueCode !== "SAVEMORE-BCV2W7") {
-      return false;
-    }
     const id = req.session.vendorId;
-    await Vendor.update({ VendorId: id }, { hasPaid: true });
-    return true;
+    if (uniqueCode === "SAVEMORE-BCV2W7") {
+      await Vendor.update(
+        { VendorId: id },
+        { hasPaid: true, AgentCode: uniqueCode }
+      );
+      return true;
+    }
+    if (uniqueCode === "BHASK-SM-UR43uW") {
+      await Vendor.update(
+        { VendorId: id },
+        { hasPaid: true, AgentCode: uniqueCode }
+      );
+      return true;
+    }
+    if (uniqueCode === "ELV-SM-FJS8u3") {
+      await Vendor.update(
+        { VendorId: id },
+        { hasPaid: true, AgentCode: uniqueCode }
+      );
+      return true;
+    }
+    if (uniqueCode === "GENR-SM-KOE3i8") {
+      await Vendor.update(
+        { VendorId: id },
+        { hasPaid: true, AgentCode: uniqueCode }
+      );
+      return true;
+    }
+    if (uniqueCode === "GANES-SM-IO3Lnv3") {
+      await Vendor.update(
+        { VendorId: id },
+        { hasPaid: true, AgentCode: uniqueCode }
+      );
+      return true;
+    }
+    return false;
   }
 
   @Mutation(() => Boolean)
@@ -79,13 +115,14 @@ export class VendorResolver {
   ): Promise<VendorResponse> {
     const existingUser = await Vendor.findOne({
       OrganizationPhone: data.phone,
+      OrganizationEmail: data.email,
     });
     if (existingUser) {
       return {
         errors: [
           {
             field: "phone",
-            message: "Phone number already exists",
+            message: "Phone/Email already exists",
           },
         ],
       };

@@ -62,12 +62,32 @@ export class OfferResolver {
         ],
       };
     }
-    if (data.offerType == "Discount" && !data.discountValue) {
+    if (data.discountValue === "") {
       return {
         errors: [
           {
             field: "discountValue",
-            message: "Discount value cannot be empty if Discount is selected",
+            message: "Field cannot be empty",
+          },
+        ],
+      };
+    }
+    if (data.offerType == "Discount" && data.discountValue === "0") {
+      return {
+        errors: [
+          {
+            field: "discountValue",
+            message: "Discount value cannot be 0 if Discount is selected",
+          },
+        ],
+      };
+    }
+    if (data.ValidTo === undefined) {
+      return {
+        errors: [
+          {
+            field: "ValidTo",
+            message: "This field cannot be empty",
           },
         ],
       };

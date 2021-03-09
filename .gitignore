@@ -4,3 +4,5 @@ node_modules/
 .env
 dump.rdb
 yarn-error.log
+deploy.sh
+test-api.sh

@@ -23,6 +23,10 @@ export class User extends BaseEntity {
   email: string;
 
   @Field()
+  @Column("int", { default: 0 })
+  tokenVersion: number;
+
+  @Field()
   @Column("varchar", { length: 10, unique: true })
   phone: string;
 
